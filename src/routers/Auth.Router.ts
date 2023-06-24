@@ -10,7 +10,10 @@ import {authcontroller} from '../controllers/Auth.Controller';
          this.config();
      } 
      config(): void{ 
-         this.router.post('/', authcontroller.login); 
+        this.router.post('/', authcontroller.login);
+        this.router.post('/sendemail/', authcontroller.sendemail); 
+        this.router.post('/checkotp/', authcontroller.checkotp); 
+        this.router.post('/restpassword/:id/', authcontroller.resetPasword);
      }
  }
 

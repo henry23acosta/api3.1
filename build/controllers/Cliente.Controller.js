@@ -31,8 +31,8 @@ class ClienteController {
     }
     getCiCliente(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { cl } = req.params;
-            yield database_1.default.query('SELECT * FROM cliente WHERE identificacion = ?', [cl], (err, result) => {
+            const { cl, idnegocio } = req.params;
+            yield database_1.default.query('SELECT * FROM cliente WHERE identificacion = ?  AND id_negocio = ?', [cl, idnegocio], (err, result) => {
                 if (err)
                     throw err;
                 if (result.length) {

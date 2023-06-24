@@ -28,8 +28,8 @@ import { checkrole } from '../middlewares/roles';
         this.router.post('/auth',[chekjwt, checkrole([2,3])], usercontroller.createAuten);
         this.router.put('/auth/:id',[chekjwt, checkrole([2,3])], usercontroller.editAuten);
         this.router.delete('/auth/:id',[chekjwt, checkrole([2,3])], usercontroller.deleteAuten);
-        this.router.put('/useruptate/:id', usercontroller.updateUser);
-        this.router.put('/userpassword/:id', usercontroller.updatePassword);
+        this.router.put('/useruptate/:id',[chekjwt, checkrole([2,3])], usercontroller.updateUser);
+        this.router.put('/userpassword/:id',[chekjwt, checkrole([2,3])], usercontroller.updatePassword);
      }
  }
 

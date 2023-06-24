@@ -8,6 +8,7 @@ const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
 const User_Router_1 = __importDefault(require("./routers/User.Router"));
 const Auth_Router_1 = __importDefault(require("./routers/Auth.Router"));
+const Compra_Router_1 = __importDefault(require("./routers/Compra.Router"));
 const Cliente_Routert_1 = __importDefault(require("./routers/Cliente.Routert"));
 const Negocio_Router_1 = __importDefault(require("./routers/Negocio.Router"));
 const Productos_Router_1 = __importDefault(require("./routers/Productos.Router"));
@@ -16,6 +17,7 @@ const Checkin_Router_1 = __importDefault(require("./routers/Checkin.Router"));
 const Register_Router_1 = __importDefault(require("./routers/Register.Router"));
 const Kardex_Router_1 = __importDefault(require("./routers/Kardex.Router"));
 require("./config/config.passport");
+require("dotenv/config");
 class Server {
     constructor() {
         this.app = (0, express_1.default)();
@@ -33,11 +35,19 @@ class Server {
         this.app.use((0, morgan_1.default)('dev'));
         this.app.use((0, cors_1.default)(corsOptions));
         this.app.use(express_1.default.json());
+        this.app.set('views', __dirname + '/views');
+        this.app.set('view engine', 'ejs');
         this.app.use(express_1.default.urlencoded({ extended: false }));
+        this.app.use(express_1.default.static('./public'));
     }
     routes() {
+        this.app.get('/', (req, res) => {
+            res.render('index', {
+                title: 'api online',
+            });
+        });
         this.app.use('/user', User_Router_1.default);
-        this.app.use('/compra', Cliente_Routert_1.default);
+        this.app.use('/compra', Compra_Router_1.default);
         this.app.use('/negocio', Negocio_Router_1.default);
         this.app.use('/categoria', Productos_Router_1.default);
         this.app.use('/producto', Productos_Router_1.default);

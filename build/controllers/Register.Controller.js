@@ -18,14 +18,23 @@ const md5_1 = __importDefault(require("md5"));
 const passport_1 = __importDefault(require("passport"));
 require("../config/config.passport");
 class RegisterController {
+    checklogin(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield database_1.default.query('SELECT * FROM usuario', (err, result) => {
+                if (err)
+                    throw err;
+                res.json(result);
+            });
+        });
+    }
     createUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { nombre, usuario, password, telefono, correo, Estado } = req.body;
+            const { nombre, user, password, telefono, correo, Estado } = req.body;
             let pass = (0, md5_1.default)(password);
-            if (!(nombre && usuario && password && telefono && correo && Estado)) {
+            if (!(nombre && user && password && telefono && correo && Estado)) {
                 res.status(404).json({ message: 'Campos Requeridos' });
             }
-            yield database_1.default.query('call crearusuarionuevo(?,?,?,?,?,?)', [nombre, usuario, pass, telefono, correo, Estado], (err, result) => {
+            yield database_1.default.query('call crearusuarionuevo(?,?,?,?,?,?)', [nombre, user, pass, telefono, correo, Estado], (err, result) => {
                 if (err)
                     throw err;
                 res.json({ message: 'Usuario Creado', result: result[0] });

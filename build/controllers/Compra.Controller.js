@@ -15,20 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.compraController = void 0;
 const database_1 = __importDefault(require("../database"));
 class CompraController {
-    //Compras
-    listCompra(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield database_1.default.query('SELECT * FROM compra', (err, result) => {
-                if (err)
-                    throw err;
-                if (result.length) {
-                    return res.json(result);
-                }
-                res.status(404).json({ text: 'Compras no Encontras' });
-            });
-        });
-    }
-    getCompra(req, res) {
+    getIdcompras(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
             yield database_1.default.query('SELECT * FROM compra WHERE idcompra = ?', [id], (err, result) => {
@@ -37,7 +24,34 @@ class CompraController {
                 if (result.length) {
                     return res.json(result);
                 }
-                res.status(404).json({ text: 'Compras no Existe' });
+                res.status(404).json({ text: 'Proveedor no Existe' });
+            });
+        });
+    }
+    getIddetallecompras(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            yield database_1.default.query('select * from viewdetallecompra where idcompra = ?', [id], (err, result) => {
+                if (err)
+                    throw err;
+                if (result.length) {
+                    return res.json(result);
+                }
+                res.status(404).json({ text: 'Detalles de Factura no Existe' });
+            });
+        });
+    }
+    //Compras
+    getcompra(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            yield database_1.default.query('SELECT * FROM viewcompraspro where id_negocio=?', [id], (err, result) => {
+                if (err)
+                    throw err;
+                if (result.length) {
+                    return res.json(result);
+                }
+                res.status(404).json({ text: 'Compras no Encontras' });
             });
         });
     }

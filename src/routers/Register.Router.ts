@@ -10,6 +10,7 @@ class RouterRegirter{
     }
     config(): void{
         this.router.post('/registar', registerController.createUser);
+        this.router.get('/check', registerController.checklogin);
         this.router.get('/google', registerController.GoogleAuth);
         this.router.post('/google/callback', registerController.googlecallback);
         this.router.get('/category/:id', productoController.getCategoria);

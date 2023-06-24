@@ -83,27 +83,27 @@ class UserController {
       });
     }
     public async createUser(req: Request, res: Response):Promise<void> {
-      console.log( req.body);
-      const { nombre,usuario,password,telefono,correo,Estado } = req.body;
-      if(!(nombre && usuario && password && telefono && correo && Estado)){
+      const { nombre,usuario,password,telefono,correo,Estado, imagen } = req.body;
+      if(!(nombre && usuario && password && telefono && correo && Estado && imagen)){
         res.status(404).json({message: 'campos requerios'});
       }else{
         let pass = md5(password);
-        await pool.query('INSERT INTO usuario(nombre,user,password,telefono,correo,Estado) VALUES (?,?,?,?,?,?)',[ nombre,usuario,pass,telefono,correo,Estado],(err , result )=>{
+        await pool.query('INSERT INTO usuario(nombre,user,password,telefono,correo,Estado, imagen) VALUES (?,?,?,?,?,?,?)',
+        [ nombre,usuario,pass,telefono,correo,Estado,imagen],(err , result )=>{
           if(err) throw err;
           res.json({text: 'Usuario creado'});
         });
       }
     }
     public async editUser(req: Request, res: Response):Promise<void>{
-      const { nombre,usuario,password,telefono,correo,Estado } = req.body;
+      const { nombre,usuario,password,telefono,correo,Estado,imagen } = req.body;
+      
       const { id } = req.params;
-      let pass = md5(password);
-      if (!(nombre && usuario  && password && telefono && correo && Estado && id)){
+      if (!(nombre && usuario &&password && telefono && correo && Estado && imagen && id)){
         res.status(404).json({message: 'Campos Requeridos'});
       }else{
-        await pool.query('UPDATE usuario SET nombre = ? ,usuario = ? ,password= ?,telefono = ? ,correo = ? ,Estado = ? WHERE id_usuario = ?', 
-        [ nombre,usuario,pass,telefono,correo,Estado, id ], (err, result) => {
+        await pool.query('UPDATE usuario SET nombre = ? ,usuario = ? ,password=?, telefono = ? ,correo = ? ,Estado = ?, imagen=? WHERE id_usuario = ?', 
+        [ nombre,usuario,password,telefono,correo,Estado,imagen, id ], (err, result) => {
           if(err) throw err;
           res.json({text: 'Usuario editado'});
         });
@@ -175,13 +175,13 @@ class UserController {
 
     public async updateUser(req: Request, res: Response): Promise<void>{
       const { id } = req.params;
-      const { nombre, telefono, correo } = req.body;
-      if (!(id && nombre && telefono && correo)){
+      const { nombre, telefono, correo, imagen } = req.body;
+      if (!(id && nombre && telefono && correo && imagen)){
         res.status(404).json({message: 'Campos Requeridos'});
         return;
       }
 
-      await pool.query('UPDATE usuario SET nombre = ?, telefono = ?, correo = ? WHERE idusuario = ?;',[nombre, telefono, correo, id], (err, result)=>{
+      await pool.query('UPDATE usuario SET nombre = ?, telefono = ?, correo = ?, imagen =? WHERE idusuario = ?;',[nombre, telefono, correo,imagen, id], (err, result)=>{
         if(err) throw err;
         res.json({ message: 'Usuario Actualizado' });
       });

@@ -112,14 +112,13 @@ class UserController {
     }
     createUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(req.body);
-            const { nombre, usuario, password, telefono, correo, Estado } = req.body;
-            if (!(nombre && usuario && password && telefono && correo && Estado)) {
+            const { nombre, usuario, password, telefono, correo, Estado, imagen } = req.body;
+            if (!(nombre && usuario && password && telefono && correo && Estado && imagen)) {
                 res.status(404).json({ message: 'campos requerios' });
             }
             else {
                 let pass = (0, md5_1.default)(password);
-                yield database_1.default.query('INSERT INTO usuario(nombre,user,password,telefono,correo,Estado) VALUES (?,?,?,?,?,?)', [nombre, usuario, pass, telefono, correo, Estado], (err, result) => {
+                yield database_1.default.query('INSERT INTO usuario(nombre,user,password,telefono,correo,Estado, imagen) VALUES (?,?,?,?,?,?,?)', [nombre, usuario, pass, telefono, correo, Estado, imagen], (err, result) => {
                     if (err)
                         throw err;
                     res.json({ text: 'Usuario creado' });
@@ -129,14 +128,13 @@ class UserController {
     }
     editUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { nombre, usuario, password, telefono, correo, Estado } = req.body;
+            const { nombre, usuario, password, telefono, correo, Estado, imagen } = req.body;
             const { id } = req.params;
-            let pass = (0, md5_1.default)(password);
-            if (!(nombre && usuario && password && telefono && correo && Estado && id)) {
+            if (!(nombre && usuario && password && telefono && correo && Estado && imagen && id)) {
                 res.status(404).json({ message: 'Campos Requeridos' });
             }
             else {
-                yield database_1.default.query('UPDATE usuario SET nombre = ? ,usuario = ? ,password= ?,telefono = ? ,correo = ? ,Estado = ? WHERE id_usuario = ?', [nombre, usuario, pass, telefono, correo, Estado, id], (err, result) => {
+                yield database_1.default.query('UPDATE usuario SET nombre = ? ,usuario = ? ,password=?, telefono = ? ,correo = ? ,Estado = ?, imagen=? WHERE id_usuario = ?', [nombre, usuario, password, telefono, correo, Estado, imagen, id], (err, result) => {
                     if (err)
                         throw err;
                     res.json({ text: 'Usuario editado' });
@@ -225,12 +223,12 @@ class UserController {
     updateUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            const { nombre, telefono, correo } = req.body;
-            if (!(id && nombre && telefono && correo)) {
+            const { nombre, telefono, correo, imagen } = req.body;
+            if (!(id && nombre && telefono && correo && imagen)) {
                 res.status(404).json({ message: 'Campos Requeridos' });
                 return;
             }
-            yield database_1.default.query('UPDATE usuario SET nombre = ?, telefono = ?, correo = ? WHERE idusuario = ?;', [nombre, telefono, correo, id], (err, result) => {
+            yield database_1.default.query('UPDATE usuario SET nombre = ?, telefono = ?, correo = ?, imagen =? WHERE idusuario = ?;', [nombre, telefono, correo, imagen, id], (err, result) => {
                 if (err)
                     throw err;
                 res.json({ message: 'Usuario Actualizado' });

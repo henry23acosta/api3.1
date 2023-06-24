@@ -13,8 +13,9 @@ class CompraRouter {
         this.config();
     }
     config() {
-        this.compra.get('/compras', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], Compra_Controller_1.compraController.listCompra);
-        this.compra.get('/compras/:id', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], Compra_Controller_1.compraController.getCompra);
+        this.compra.get('/comprafact/:id', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], Compra_Controller_1.compraController.getcompra);
+        this.compra.get('/compraid/:id', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], Compra_Controller_1.compraController.getIdcompras);
+        this.compra.get('/compradetalle/:id', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], Compra_Controller_1.compraController.getIddetallecompras);
         this.compra.post('/compras', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], Compra_Controller_1.compraController.addprimeraCompra);
         this.compra.put('/compras/:id', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], Compra_Controller_1.compraController.addCompra);
         this.compra.delete('/compras/:id', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], Compra_Controller_1.compraController.deleteCompra);

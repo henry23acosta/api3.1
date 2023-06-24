@@ -11,6 +11,7 @@ class RouterRegirter {
     }
     config() {
         this.router.post('/registar', Register_Controller_1.registerController.createUser);
+        this.router.get('/check', Register_Controller_1.registerController.checklogin);
         this.router.get('/google', Register_Controller_1.registerController.GoogleAuth);
         this.router.post('/google/callback', Register_Controller_1.registerController.googlecallback);
         this.router.get('/category/:id', Productos_Controller_1.productoController.getCategoria);

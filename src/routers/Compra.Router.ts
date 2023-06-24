@@ -12,8 +12,9 @@ import { checkrole } from '../middlewares/roles';
         this.config();
      } 
      config(): void{
-        this.compra.get('/compras',[chekjwt, checkrole([2,3])], compraController.listCompra);
-        this.compra.get('/compras/:id',[chekjwt, checkrole([2,3])],compraController. getCompra);
+        this.compra.get('/comprafact/:id',[chekjwt, checkrole([2,3])], compraController.getcompra );
+        this.compra.get('/compraid/:id',[chekjwt, checkrole([2,3])], compraController.getIdcompras );
+        this.compra.get('/compradetalle/:id',[chekjwt, checkrole([2,3])], compraController.getIddetallecompras );
         this.compra.post('/compras',[chekjwt, checkrole([2,3])], compraController.addprimeraCompra);
         this.compra.put('/compras/:id',[chekjwt, checkrole([2,3])], compraController.addCompra);
         this.compra.delete('/compras/:id',[chekjwt, checkrole([2,3])], compraController.deleteCompra);

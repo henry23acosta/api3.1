@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import pool from '../database';
-//libreria para controlar las rspuestas o response
+//libreria para controlar las respuestas o response
 
 export const checkrole = (roles: Array<number>) => {
   return async (req: Request, res: Response, next: NextFunction) => {

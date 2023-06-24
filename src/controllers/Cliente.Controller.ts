@@ -16,8 +16,8 @@ class ClienteController {
     }
 
     public async getCiCliente(req: Request, res: Response):Promise<void>{
-        const { cl } = req.params;
-        await pool.query('SELECT * FROM cliente WHERE identificacion = ?', [ cl ], (err, result) => {
+        const { cl, idnegocio } = req.params;
+        await pool.query('SELECT * FROM cliente WHERE identificacion = ?  AND id_negocio = ?', [ cl, idnegocio ], (err, result) => {
             if(err) throw err;
             if(result.length){
                 return res.json(result)

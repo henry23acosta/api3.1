@@ -20,7 +20,10 @@ class ProductoController {
     getProducto(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            yield database_1.default.query('SELECT * FROM productos  WHERE estado = 1 AND id_negocio = ?', [id], (err, result) => {
+            yield database_1.default.query(`SELECT p.idProductos, p.nombre, p.costo, p.talla,`
+                + ` p.imagen, p.stock, p.estado,CONCAT(c.Nombre,'( ', c.Descripcion,' )') ` +
+                ` as categoria, p.id_negocio FROM productos p INNER JOIN categoria c WHERE ` +
+                `p.idCategoria = c.idCategoria AND p.estado = 1 AND p.id_negocio = ?`, [id], (err, result) => {
                 if (err)
                     throw err;
                 if (result.length) {

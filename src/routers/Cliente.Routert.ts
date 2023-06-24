@@ -16,7 +16,7 @@ class ClienteRouter {
         this.router.post('/clientes',[chekjwt, checkrole([2,3])], clienteController.createCliente);
         this.router.put('/clientes/:id',[chekjwt, checkrole([2,3])], clienteController.updateCliente);
         this.router.delete('/clientes/:id',[chekjwt, checkrole([2,3])], clienteController.deleteCliente);
-        this.router.get('/cl/:cl',[chekjwt, checkrole([2,3])], clienteController.getCiCliente);
+        this.router.get('/cl/:cl/:idnegocio',[chekjwt, checkrole([2,3])], clienteController.getCiCliente);
     }
 }
 

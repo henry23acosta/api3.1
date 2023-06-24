@@ -19,7 +19,7 @@ class CheckInController {
     getfacturas(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            yield database_1.default.query('SELECT * FROM viewVentas where id_negocio=?', [id], (err, result) => {
+            yield database_1.default.query('SELECT * FROM viewventas where id_negocio=?', [id], (err, result) => {
                 if (err)
                     throw err;
                 if (result.length) {

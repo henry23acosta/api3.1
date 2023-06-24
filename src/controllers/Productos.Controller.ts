@@ -6,7 +6,10 @@ class ProductoController {
     //get
     public async getProducto(req: Request, res: Response):Promise<void> {
       const { id } = req.params;
-      await pool.query('SELECT * FROM productos  WHERE estado = 1 AND id_negocio = ?',[id], (err, result) => {
+      await pool.query(`SELECT p.idProductos, p.nombre, p.costo, p.talla,`
+      +` p.imagen, p.stock, p.estado,CONCAT(c.Nombre,'( ', c.Descripcion,' )') `+
+      ` as categoria, p.id_negocio FROM productos p INNER JOIN categoria c WHERE `+
+      `p.idCategoria = c.idCategoria AND p.estado = 1 AND p.id_negocio = ?`,[id], (err, result) => {
         if(err) throw err;
         if(result.length){
           return res.json(result)

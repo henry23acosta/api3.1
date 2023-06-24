@@ -3,9 +3,31 @@ import pool from '../database';
 
 class CompraController {
 
+    public async getIdcompras(req: Request, res: Response):Promise<void>{
+        const { id } = req.params;
+        await pool.query('SELECT * FROM compra WHERE idcompra = ?', [ id ], (err, result) => {
+            if(err) throw err;
+            if(result.length){
+                return res.json(result)
+            }
+            res.status(404).json({text: 'Proveedor no Existe'});
+        });
+    }
+    
+    public async getIddetallecompras(req: Request, res: Response):Promise<void>{
+      const { id } = req.params;
+      await pool.query('select * from viewdetallecompra where idcompra = ?', [ id ], (err, result) => {
+          if(err) throw err;
+          if(result.length){
+              return res.json(result)
+          }
+          res.status(404).json({text: 'Detalles de Factura no Existe'});
+      });
+    }
     //Compras
-    public async listCompra(req: Request, res: Response):Promise<void>{
-        await pool.query('SELECT * FROM compra', (err, result) => {
+    public async getcompra(req: Request, res: Response):Promise<void>{
+        const { id } = req.params;
+        await pool.query('SELECT * FROM viewcompraspro where id_negocio=?',[id], (err, result) => {
             if(err) throw err;
             if(result.length){
                 return res.json(result)
@@ -14,16 +36,6 @@ class CompraController {
           });
     }
 
-    public async getCompra(req: Request, res: Response):Promise<void>{
-        const { id } = req.params;
-        await pool.query('SELECT * FROM compra WHERE idcompra = ?', [ id ], (err, result) => {
-            if(err) throw err;
-            if(result.length){
-                return res.json(result)
-            }
-            res.status(404).json({text: 'Compras no Existe'});
-        });
-    }
 
     public async addprimeraCompra(req: Request, res: Response):Promise<void>{
         const { nomb,costop, tall,imag, stocprod, idCat} = req.body;

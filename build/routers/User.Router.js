@@ -28,8 +28,8 @@ class UserRouter {
         this.router.post('/auth', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], User_controller_1.usercontroller.createAuten);
         this.router.put('/auth/:id', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], User_controller_1.usercontroller.editAuten);
         this.router.delete('/auth/:id', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], User_controller_1.usercontroller.deleteAuten);
-        this.router.put('/useruptate/:id', User_controller_1.usercontroller.updateUser);
-        this.router.put('/userpassword/:id', User_controller_1.usercontroller.updatePassword);
+        this.router.put('/useruptate/:id', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], User_controller_1.usercontroller.updateUser);
+        this.router.put('/userpassword/:id', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], User_controller_1.usercontroller.updatePassword);
     }
 }
 const userRouter = new UserRouter();

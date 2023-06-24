@@ -7,17 +7,27 @@ import '../config/config.passport'
 class RegisterController {
 
   
+  public async checklogin(req: Request, res: Response):Promise<void> {
+
+    await pool.query('SELECT * FROM usuario', (err, result) => {
+      if(err) throw err;
+      res.json(result);
+    });
+  }
+
   public async createUser(req: Request, res: Response):Promise<void> {
-    const { nombre,usuario,password,telefono,correo,Estado } = req.body;
+    const { nombre,user,password,telefono,correo,Estado } = req.body;
     let pass = md5(password);
-      if (!(nombre && usuario && password && telefono && correo && Estado )){
-        res.status(404).json({message: 'Campos Requeridos'});
-      }
-      await pool.query('call crearusuarionuevo(?,?,?,?,?,?)', [ nombre,usuario,pass,telefono,correo,Estado ], (err, result) => {
-        if(err) throw err;
-        res.json({message: 'Usuario Creado', result: result[0]});
-      });
+    if (!(nombre && user && password && telefono && correo && Estado )){
+      res.status(404).json({message: 'Campos Requeridos'});
     }
+
+    await pool.query('call crearusuarionuevo(?,?,?,?,?,?)', [ nombre,user,pass,telefono,correo,Estado ], (err, result) => {
+      if(err) throw err;
+      res.json({message: 'Usuario Creado', result: result[0]});
+    });
+  }
+
 
   public async GoogleAuth(req: Request, res: Response): Promise<void> {
     passport.authenticate('google', { scope: ['profile', 'email'] })

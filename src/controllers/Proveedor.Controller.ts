@@ -27,12 +27,14 @@ class ProveedoresController {
     }
 
     public async createProveedores(req: Request, res: Response):Promise<void>{
-        const { identificacion,nombre,direccion,telefono,email,estado,Cuenta_bancaria, id_negocio} = req.body;
-        if(!(identificacion && nombre && direccion && telefono && email && estado && Cuenta_bancaria && id_negocio)){
+        const { identificacion,nombre,direccion,telefono,email,estado,bancos,Cuenta_bancaria, id_negocio} = req.body;
+        console.log(req.body);
+        if(!(identificacion && nombre && direccion && telefono && email && estado && bancos&& Cuenta_bancaria && id_negocio)){
             res.status(404).json({message: 'Campos Requeridos'});
+            return;
           }else{
-        await pool.query('INSERT INTO proveedores(identificacion,nombre,direccion,telefono,email,estado,Cuenta_bancaria,id_negocio)VALUES(?,?,?,?,?,?,?,?)', 
-        [ identificacion,nombre,direccion,telefono,email,estado,Cuenta_bancaria, id_negocio], (err, result) => {
+        await pool.query('INSERT INTO proveedores(identificacion,nombre,direccion,telefono,email,estado,bancos,Cuenta_bancaria,id_negocio)VALUES(?,?,?,?,?,?,?,?,?)', 
+        [ identificacion,nombre,direccion,telefono,email,estado,bancos,Cuenta_bancaria, id_negocio], (err, result) => {
           if(err) throw err;
           res.json({text: 'Proveedor Creado'});
         });
@@ -41,10 +43,10 @@ class ProveedoresController {
     }
 
     public async updateProveedores(req: Request, res: Response): Promise<void> {
-        const { identificacion,nombre,direccion,telefono,email,estado,Cuenta_bancaria } = req.body;
+        const { identificacion,nombre,direccion,telefono,email,bancos,estado,Cuenta_bancaria } = req.body;
         const { id } = req.params;
-        await pool.query('UPDATE proveedores SET identificacion = ?, nombre = ?, direccion = ?, telefono = ?, email = ?, estado = ?, Cuenta_bancaria = ? WHERE idProveedores = ?',
-        [identificacion,nombre,direccion,telefono,email,estado,Cuenta_bancaria,id],(err, result) => {
+        await pool.query('UPDATE proveedores SET identificacion = ?, nombre = ?, direccion = ?, telefono = ?, email = ?, estado = ?,bancos=?, Cuenta_bancaria = ? WHERE idProveedores = ?',
+        [identificacion,nombre,direccion,telefono,email,estado,bancos,Cuenta_bancaria,id],(err, result) => {
           if(err) throw err;
           res.json({text: 'Proveedor Actualizado'});
         });

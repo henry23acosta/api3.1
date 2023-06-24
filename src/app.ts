@@ -12,6 +12,7 @@ import CheckinRouter from './routers/Checkin.Router';
 import RegisterRouter from './routers/Register.Router';
 import KardexRouter from './routers/Kardex.Router';
 import './config/config.passport';
+import 'dotenv/config';
 class Server{
     
     public app: Application;
@@ -32,13 +33,21 @@ class Server{
         this.app.use(morgan('dev'));
         this.app.use(cors(corsOptions));
         this.app.use(express.json());
+        this.app.set('views', __dirname+'/views');
+        this.app.set('view engine', 'ejs');
         this.app.use(express.urlencoded({extended: false}));
+        this.app.use(express.static('./public'))
         
     }
 
     routes(): void {
+        this.app.get('/',(req,res)=>{
+            res.render('index',{
+                title: 'api online',
+            });
+        });
         this.app.use('/user', userRouter);
-        this.app.use('/compra', clienteRouter);
+        this.app.use('/compra', compraRouter);
         this.app.use('/negocio', negocioRouter);
         this.app.use('/categoria', productosRouter);
         this.app.use('/producto', productosRouter);

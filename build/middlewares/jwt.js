@@ -42,7 +42,7 @@ const chekjwt = (req, res, next) => {
     }
     catch (e) {
         //envia una pagina de error 
-        return res.status(401).send();
+        return res.status(401).json({ 'messaje': 'no autorizado' });
     }
     //generar un token para jwtpayload
     //expira en una hora la sesion 

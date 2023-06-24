@@ -5,7 +5,7 @@ class CheckInController {
   //FACTURA
   public async getfacturas(req: Request, res: Response):Promise<void>{
     const { id } = req.params;
-    await pool.query('SELECT * FROM viewVentas where id_negocio=?',[id], (err, result) => {
+    await pool.query('SELECT * FROM viewventas where id_negocio=?',[id], (err, result) => {
         if(err) throw err;
         if(result.length){
             return res.json(result)
@@ -38,7 +38,7 @@ public async getIddetallefacturas(req: Request, res: Response):Promise<void>{
 
 
 
-    
+
     //detalleFactura
     public async ListCheckin(req: Request, res: Response): Promise<void>{
       const { id } = req.params;

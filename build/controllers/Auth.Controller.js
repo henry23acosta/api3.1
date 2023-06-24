@@ -40,7 +40,10 @@ const database_1 = __importDefault(require("../database"));
 const jwt = __importStar(require("jsonwebtoken"));
 const config_1 = __importDefault(require("../config/config"));
 const md5_1 = __importDefault(require("md5"));
+const mailer_1 = require("../config/mailer");
+const otpgenerato_1 = require("../config/otpgenerato");
 //los controladores no necesitan inicializacion 
+const savedOTPS = {};
 class AuthController {
     login(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -67,6 +70,104 @@ class AuthController {
                 }
                 res.status(404).json({ text: 'Usuario no existe' });
             });
+        });
+    }
+    sendemail(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { email } = req.body;
+                yield database_1.default.query('SELECT * FROM usuario WHERE correo = ?', [email], (err, result) => {
+                    if (err)
+                        throw err;
+                    if (result.length > 0) {
+                        const data = result[0];
+                        const otp = (0, otpgenerato_1.generateOTP)();
+                        mailer_1.transporter.sendMail({
+                            from: '"Centro Comercial Popular 👻" <popularcentrocomercial@gmail.com>',
+                            to: data.correo,
+                            subject: "Código de Recuperación",
+                            html: `
+              <h1>Centro Comercial Popular</h1>
+              <h3>hola!: ${data.nombre}</h3>
+              <br>
+              <p>Código OTP de recuperacion de contraseña</p>
+              <h1>${otp} </h1>
+              `, // html body
+                        });
+                        savedOTPS[email] = otp;
+                        setTimeout(() => {
+                            delete savedOTPS[email];
+                        }, 300000);
+                        res.json({
+                            message: 'Message enviado corectamente',
+                        });
+                        return;
+                    }
+                    res.status(404).json({ message: 'No hay ningun usuario con ese email' });
+                });
+            }
+            catch (e) {
+                const emailStatus = e;
+                res.status(404).json({ message: 'something goes wrong!' });
+            }
+        });
+    }
+    checkotp(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { email, otp } = req.body;
+            console.log(savedOTPS[email]);
+            if (savedOTPS[email] == otp) {
+                yield database_1.default.query('SELECT * FROM usuario WHERE correo = ?', [email], (err, result) => {
+                    if (err)
+                        throw err;
+                    if (result.length > 0) {
+                        const data = result[0];
+                        const id = jwt.sign({
+                            idusuario: data.idusuario
+                        }, config_1.default.jwtSecret, { expiresIn: '5m' });
+                        res.json({
+                            message: 'ok',
+                            token: id
+                        });
+                    }
+                });
+                return;
+            }
+            res.status(404).json({ message: 'error' });
+        });
+    }
+    resetPasword(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            const { password, password2 } = req.body;
+            try {
+                const idcode = jwt.verify(id, config_1.default.jwtSecret);
+                console.log(idcode);
+                if (!(password && password2)) {
+                    res.status(404).json({ message: 'campos requeridos requerido' });
+                    return;
+                }
+                if (!(password === password2)) {
+                    res.status(404).json({ message: 'Contraseña No son iguales' });
+                }
+                let pass;
+                if (password) {
+                    pass = (0, md5_1.default)(password);
+                }
+                yield database_1.default.query('UPDATE usuario SET password = ? WHERE Estado = 1 AND idusuario = ?', [pass, idcode.idusuario], (err, result) => {
+                    if (err)
+                        throw err;
+                    console.log(result);
+                    if (result) {
+                        res.json({ message: 'contraseñas actualizadas' });
+                        return;
+                    }
+                    res.status(404).json({ message: 'erro al canbiar la contraseña' });
+                });
+            }
+            catch (err) {
+                res.status(404).json(err);
+            }
         });
     }
 }
