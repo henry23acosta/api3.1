@@ -14,50 +14,147 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.productoController = void 0;
 const database_1 = __importDefault(require("../database"));
+const database1_1 = __importDefault(require("../database1"));
 class ProductoController {
     //Producto
     //get
     getProducto(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            yield database_1.default.query(`SELECT p.idProductos, p.nombre, p.costo, p.talla,`
-                + ` p.imagen, p.stock, p.estado,CONCAT(c.Nombre,'( ', c.Descripcion,' )') ` +
-                ` as categoria, p.id_negocio FROM productos p INNER JOIN categoria c WHERE ` +
-                `p.idCategoria = c.idCategoria AND p.estado = 1 AND p.id_negocio = ?`, [id], (err, result) => {
-                if (err)
-                    throw err;
-                if (result.length) {
-                    return res.json(result);
+            try {
+                const p = database1_1.default.promise();
+                const [rows, fields] = yield p.query('SELECT * FROM listproductos WHERE id_negocio = ?', [id]);
+                const rows1 = rows;
+                const res1 = [];
+                for (let item of rows1) {
+                    const result = yield p.query('SELECT * FROM productos_has_imagen WHERE idProductos = ?', [item.idProductos]);
+                    const result1 = result;
+                    const img = [];
+                    for (const i of result1[0]) {
+                        img.push(i.idimagen);
+                    }
+                    res1.push({
+                        idProductos: item.idProductos,
+                        nombre: item.nombre,
+                        costo: item.costo,
+                        talla: item.talla,
+                        stock: item.stock,
+                        estado: item.estado,
+                        images: img,
+                        categoria: item.categoria,
+                        id_negocio: item.id_negocio,
+                    });
                 }
-                res.status(404).json({ text: 'Productos no Encontrados' });
-            });
+                res.json(res1);
+            }
+            catch (e) {
+                res.status(404).json({ text: e.message });
+            }
         });
     }
     getProductoCateg(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { id } = req.params;
+                const p = database1_1.default.promise();
+                const [rows, fields] = yield p.query('SELECT * FROM productos WHERE idCategoria = ?', [id]);
+                res.json(rows);
+            }
+            catch (e) {
+                res.status(404).json({ text: e.message });
+            }
+        });
+    }
+    //getidIMAGEN
+    getidimagen(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            yield database_1.default.query('SELECT * FROM productos WHERE idCategoria = ?', [id], (err, result) => {
+            yield database_1.default.query('SELECT* FROM imagen WHERE idimagen = ?', [id], (err, result) => {
                 if (err)
                     throw err;
                 if (result.length) {
                     return res.json(result);
                 }
-                res.json({ text: 'Productos no Encontrados' });
+                res.status(404).json({ text: 'Imagen no existe' });
+            });
+        });
+    }
+    createimagen(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { idproducto, url } = req.body;
+            console.log(req.body);
+            if (!(idproducto && url)) {
+                res.status(404).json({ message: 'Campos Requeridos' });
+            }
+            yield database_1.default.query('call crearimagen (?,?);', [idproducto, url], (err, result) => {
+                if (err)
+                    throw err;
+                res.json({ text: 'Imagen Creada' });
+            });
+        });
+    }
+    //update
+    updateimagen(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { urlimg } = req.body;
+            const { id } = req.params;
+            if (!(urlimg && id)) {
+                res.status(404).json({ message: 'Campos Requeridos' });
+            }
+            else {
+                yield database_1.default.query('UPDATE productos SET urlimg = ? WHERE idimagen = ?;', [urlimg, id], (err, result) => {
+                    if (err)
+                        throw err;
+                    res.json({ text: 'Imagen editado' });
+                });
+            }
+        });
+    }
+    //delete
+    deleteimagen(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            if (!(id)) {
+                res.status(404).json({ message: 'Campos Requeridos' });
+            }
+            yield database_1.default.query('DELETE FROM imagen WHERE idimagen = ?', [id], (err, result) => {
+                if (err)
+                    throw err;
+                res.json({ message: 'imagen eliminado' });
             });
         });
     }
     //getid
     getidProducto(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { id } = req.params;
-            yield database_1.default.query('SELECT* FROM productos WHERE idProductos = ?', [id], (err, result) => {
-                if (err)
-                    throw err;
-                if (result.length) {
-                    return res.json(result);
+            try {
+                const { id } = req.params;
+                const p = database1_1.default.promise();
+                const [rows, fields] = yield p.query('SELECT * FROM productos WHERE idProductos = ?', [id]);
+                const rows1 = rows;
+                const result = yield p.query('SELECT * FROM productos_has_imagen WHERE idProductos = ?', [id]);
+                const result1 = result;
+                const img = [];
+                for (const i of result1[0]) {
+                    const result2 = yield p.query('SELECT * FROM imagen WHERE idimagen = ?', [i.idimagen]);
+                    const result3 = result2;
+                    img.push(result3[0][0]);
                 }
-                res.status(404).json({ text: 'Rol no existe' });
-            });
+                res.json({
+                    idProductos: rows1[0].idProductos,
+                    nombre: rows1[0].nombre,
+                    costo: rows1[0].costo,
+                    talla: rows1[0].talla,
+                    stock: rows1[0].stock,
+                    estado: rows1[0].estado,
+                    images: img,
+                    idCategoria: rows1[0].idCategoria,
+                    id_negocio: rows1[0].id_negocio
+                });
+            }
+            catch (e) {
+                res.status(404).json({ text: e.message });
+            }
         });
     }
     //create

@@ -16,8 +16,10 @@ const Proveedores_Router_1 = __importDefault(require("./routers/Proveedores.Rout
 const Checkin_Router_1 = __importDefault(require("./routers/Checkin.Router"));
 const Register_Router_1 = __importDefault(require("./routers/Register.Router"));
 const Kardex_Router_1 = __importDefault(require("./routers/Kardex.Router"));
+const media_router_1 = __importDefault(require("./routers/media.router"));
 require("./config/config.passport");
 require("dotenv/config");
+const express_fileupload_1 = __importDefault(require("express-fileupload"));
 class Server {
     constructor() {
         this.app = (0, express_1.default)();
@@ -31,6 +33,7 @@ class Server {
             "preflightContinue": false,
             "optionsSuccessStatus": 204
         };
+        this.app.use((0, express_fileupload_1.default)());
         this.app.set('port', process.env.PORT || 3000);
         this.app.use((0, morgan_1.default)('dev'));
         this.app.use((0, cors_1.default)(corsOptions));
@@ -55,9 +58,10 @@ class Server {
         this.app.use('/auth', Auth_Router_1.default);
         this.app.use('/kardex', Kardex_Router_1.default);
         this.app.use('/cliente', Cliente_Routert_1.default);
-        //this.app.use('/nego', indexrouternegocio);
+        this.app.use('/media', media_router_1.default);
         this.app.use('/proveedor', Proveedores_Router_1.default);
         this.app.use('/checkin', Checkin_Router_1.default);
+        this.app.use('/media', express_1.default.static('./media'));
         //this.app.use( TodoController );
     }
     start() {

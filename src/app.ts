@@ -11,8 +11,11 @@ import ProveedoresRouter from './routers/Proveedores.Router';
 import CheckinRouter from './routers/Checkin.Router'; 
 import RegisterRouter from './routers/Register.Router';
 import KardexRouter from './routers/Kardex.Router';
+import mediaRouter from './routers/media.router';
 import './config/config.passport';
 import 'dotenv/config';
+import fileUpload from 'express-fileupload';
+
 class Server{
     
     public app: Application;
@@ -29,6 +32,7 @@ class Server{
             "preflightContinue": false,
             "optionsSuccessStatus": 204
         }
+        this.app.use(fileUpload());
         this.app.set('port', process.env.PORT || 3000);
         this.app.use(morgan('dev'));
         this.app.use(cors(corsOptions));
@@ -36,8 +40,7 @@ class Server{
         this.app.set('views', __dirname+'/views');
         this.app.set('view engine', 'ejs');
         this.app.use(express.urlencoded({extended: false}));
-        this.app.use(express.static('./public'))
-        
+        this.app.use(express.static('./public'));
     }
 
     routes(): void {
@@ -55,9 +58,10 @@ class Server{
         this.app.use('/auth', authRouter );
         this.app.use('/kardex', KardexRouter);
         this.app.use('/cliente', clienteRouter);
-        //this.app.use('/nego', indexrouternegocio);
+        this.app.use('/media', mediaRouter);
         this.app.use('/proveedor', ProveedoresRouter);
         this.app.use('/checkin', CheckinRouter );
+        this.app.use('/media', express.static('./media'));
         //this.app.use( TodoController );
     }
 

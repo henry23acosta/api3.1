@@ -1,88 +1,195 @@
 import { Request, Response } from 'express';
 import pool from '../database';
+import pool1 from '../database1';
+import { RowDataPacket, OkPacket } from 'mysql2';
 
 class ProductoController {
     //Producto
     //get
+    
     public async getProducto(req: Request, res: Response):Promise<void> {
       const { id } = req.params;
-      await pool.query(`SELECT p.idProductos, p.nombre, p.costo, p.talla,`
-      +` p.imagen, p.stock, p.estado,CONCAT(c.Nombre,'( ', c.Descripcion,' )') `+
-      ` as categoria, p.id_negocio FROM productos p INNER JOIN categoria c WHERE `+
-      `p.idCategoria = c.idCategoria AND p.estado = 1 AND p.id_negocio = ?`,[id], (err, result) => {
-        if(err) throw err;
-        if(result.length){
-          return res.json(result)
+      try{
+        const p = pool1.promise();
+        const [rows,fields] = await p.query('SELECT * FROM listproductos WHERE id_negocio = ?',[id]);
+        const rows1: any = rows;
+        const res1: any[] = [];
+        for(let item of rows1){
+          const result = await p.query('SELECT * FROM productos_has_imagen WHERE idProductos = ?', [item.idProductos]);
+          const result1: any = result;
+          const img: any[] = [];
+          for (const i of result1[0]) {
+            img.push(i.idimagen);
+          }
+          res1.push({
+            idProductos: item.idProductos,
+            nombre: item.nombre,
+            costo: item.costo,
+            talla: item.talla,
+            stock: item.stock,
+            estado: item.estado,
+            images: img,
+            categoria: item.categoria,
+            id_negocio: item.id_negocio,
+          });
         }
-        res.status(404).json({text: 'Productos no Encontrados'});
-      });
+        res.json(res1);
+      }
+      
+      catch(e: any){
+        res.status(404).json({text: e.message});
+      }
     }
 
+
+
+
     public async getProductoCateg(req: Request, res: Response):Promise<void> {
-      const { id } = req.params;
-      await pool.query('SELECT * FROM productos WHERE idCategoria = ?',[ id ], (err, result) => {
-          if(err) throw err;
-          if(result.length){
-            return res.json(result)
-          }
-          res.json({text: 'Productos no Encontrados'});
-        });
+      try{
+        const { id } = req.params;
+        const p = pool1.promise();
+        const [rows,fields] = await p.query('SELECT * FROM productos WHERE idCategoria = ?',[ id ]);
+        res.json(rows);
+      }
+      catch(e:any){
+        res.status(404).json({text: e.message});
+      }
   }
 
-    //getid
-    public async getidProducto(req: Request, res: Response):Promise<void> {
+    //getidIMAGEN
+    public async getidimagen(req: Request, res: Response):Promise<void> {
         const { id } = req.params;
-        await pool.query('SELECT* FROM productos WHERE idProductos = ?', [ id ], (err, result) => {
+        await pool.query('SELECT* FROM imagen WHERE idimagen = ?', [ id ], (err, result) => {
             if(err) throw err;
             if(result.length){
                 return res.json(result)
             }
-        res.status(404).json({text: 'Rol no existe'});
+        res.status(404).json({text: 'Imagen no existe'});
       });
-    }
-    //create
-    public async createProducto(req: Request, res: Response):Promise<void> {
-        const { nombre, costo, talla, imagen, stock, idCategoria, id_negocio } = req.body;
+    }    
+
+    public async createimagen(req: Request, res: Response):Promise<void> {
+        const { idproducto,url } = req.body;
         console.log(req.body);
 
-        if(!(nombre && costo && talla && imagen && stock && idCategoria && id_negocio)){
+        if(!(idproducto && url)){
           res.status(404).json({message: 'Campos Requeridos'});
-          return;
         }
-
-        await pool.query('call generainventarioinicial(?,?,?,?,?,?,?);',[nombre, costo, talla, imagen, stock, idCategoria, id_negocio],(err, result) =>{
+        await pool.query('call crearimagen (?,?);',[ idproducto,url],(err, result) =>{
           if(err) throw err;
-          res.json({text: 'Categoria Creada'});
+          res.json({text: 'Imagen Creada'});
         });
-       
     }
+
     //update
-    public async updateProducto(req: Request, res: Response):Promise<void> {
-        const { nombre, costo, talla, imagen, stock, idCategoria  } = req.body;
+    public async updateimagen(req: Request, res: Response):Promise<void> {
+        const { urlimg  } = req.body;
         const { id } = req.params;
-  
-        if (!(nombre && costo && talla && imagen && stock && idCategoria && id)){
+        if (!(urlimg && id)){
           res.status(404).json({message: 'Campos Requeridos'});
         }else{
-          await pool.query('UPDATE productos SET nombre = ?, costo = ?, talla = ?, imagen = ?, stock = ?, idCategoria = ? WHERE idProductos = ?;',
-          [ nombre, costo, talla, imagen, stock, idCategoria, id ], (err, result) => {
+          await pool.query('UPDATE productos SET urlimg = ? WHERE idimagen = ?;',
+          [ urlimg, id ], (err, result) => {
            if(err) throw err;
-           res.json({text: 'Producto editado'});
+           res.json({text: 'Imagen editado'});
          });
         }
     }
     //delete
-    public async deleteProducto(req: Request, res: Response):Promise<void> {
+    public async deleteimagen(req: Request, res: Response):Promise<void> {
         const { id } = req.params;
 
       if (!(id)){
         res.status(404).json({message: 'Campos Requeridos'});
       }
-      await pool.query('UPDATE productos SET estado=0 WHERE idProductos = ?', [ id ], (err, result) => {
+      await pool.query('DELETE FROM imagen WHERE idimagen = ?', [ id ], (err, result) => {
         if(err) throw err;
-        res.json({ message: 'Producto eliminado'});
+        res.json({ message: 'imagen eliminado'});
       });
     }
+
+
+    //getid
+    public async getidProducto(req: Request, res: Response):Promise<void> {
+      try{
+        const { id } = req.params;
+        const p = pool1.promise();
+        const [rows,fields] = await p.query('SELECT * FROM productos WHERE idProductos = ?',[ id ]);
+        const rows1: any = rows;
+        const result = await p.query('SELECT * FROM productos_has_imagen WHERE idProductos = ?', [id]);
+        const result1: any = result;
+        const img: any[] = [];
+        for (const i of result1[0]) {
+          const result2 = await p.query('SELECT * FROM imagen WHERE idimagen = ?', [i.idimagen]);
+          const result3: any = result2;
+          img.push(result3[0][0]);
+        }
+        res.json({
+            idProductos: rows1[0].idProductos,
+            nombre: rows1[0].nombre,
+            costo: rows1[0].costo,
+            talla: rows1[0].talla,
+            stock: rows1[0].stock,
+            estado: rows1[0].estado,
+            images: img,
+            idCategoria: rows1[0].idCategoria,
+            id_negocio: rows1[0].id_negocio
+        });
+      }
+      catch(e:any){
+        res.status(404).json({text: e.message});
+      }
+  }
+  //create
+  public async createProducto(req: Request, res: Response):Promise<void> {
+      const { nombre, costo, talla, imagen, stock, idCategoria, id_negocio } = req.body;
+      console.log(req.body);
+
+      if(!(nombre && costo && talla && imagen && stock && idCategoria && id_negocio)){
+        res.status(404).json({message: 'Campos Requeridos'});
+        return;
+      }
+
+      await pool.query('call generainventarioinicial(?,?,?,?,?,?,?);',[nombre, costo, talla, imagen, stock, idCategoria, id_negocio],(err, result) =>{
+        if(err) throw err;
+        res.json({text: 'Categoria Creada'});
+      });
+     
+  }
+  //update
+  public async updateProducto(req: Request, res: Response):Promise<void> {
+      const { nombre, costo, talla, imagen, stock, idCategoria  } = req.body;
+      const { id } = req.params;
+
+      if (!(nombre && costo && talla && imagen && stock && idCategoria && id)){
+        res.status(404).json({message: 'Campos Requeridos'});
+      }else{
+        await pool.query('UPDATE productos SET nombre = ?, costo = ?, talla = ?, imagen = ?, stock = ?, idCategoria = ? WHERE idProductos = ?;',
+        [ nombre, costo, talla, imagen, stock, idCategoria, id ], (err, result) => {
+         if(err) throw err;
+         res.json({text: 'Producto editado'});
+       });
+      }
+  }
+  //delete
+  public async deleteProducto(req: Request, res: Response):Promise<void> {
+      const { id } = req.params;
+
+    if (!(id)){
+      res.status(404).json({message: 'Campos Requeridos'});
+    }
+    await pool.query('UPDATE productos SET estado=0 WHERE idProductos = ?', [ id ], (err, result) => {
+      if(err) throw err;
+      res.json({ message: 'Producto eliminado'});
+    });
+  }
+
+
+
+
+
+
+
     //Categoria
     //get
     public async getCategoria(req: Request, res: Response):Promise<void> {
