@@ -3,6 +3,11 @@ import pool from '../database';
 import pool1 from '../database1';
 import { RowDataPacket, OkPacket } from 'mysql2';
 
+
+const fs = require('fs');
+const { promisify } = require('util');
+const unlinkAsync = promisify(fs.unlink);
+
 class ProductoController {
     //Producto
     //get
@@ -19,7 +24,16 @@ class ProductoController {
           const result1: any = result;
           const img: any[] = [];
           for (const i of result1[0]) {
-            img.push(i.idimagen);
+            console.log(i);
+            const result2 = await p.query('SELECT * FROM imagen WHERE idimagen = ?', [i.idimagen]);
+            const r:any = result2[0];
+            img.push(
+              {
+                idimagen: result1[0].idimagen,
+                //urlimg: `http://localhost:3000${r[0].urlimg}`
+                urlimg: `https://www.appopular.me${r[0].urlimg}`
+              }
+            );
           }
           res1.push({
             idProductos: item.idProductos,
@@ -98,7 +112,6 @@ class ProductoController {
     //delete
     public async deleteimagen(req: Request, res: Response):Promise<void> {
         const { id } = req.params;
-
       if (!(id)){
         res.status(404).json({message: 'Campos Requeridos'});
       }
@@ -107,6 +120,55 @@ class ProductoController {
         res.json({ message: 'imagen eliminado'});
       });
     }
+
+
+
+
+ public async deleteimagentotAL(req: Request, res: Response): Promise<void> {
+  const { id } = req.params;
+  if (!id) {
+    res.status(404).json({ message: 'Campos Requeridos' });
+    return;
+  }
+
+  // Primero, obtenemos la información de la imagen para obtener su ruta en el sistema de archivos
+  await pool.query('SELECT urlimg FROM imagen WHERE idimagen = ?', [id], async (err, result) => {
+    if (err) {
+      throw err;
+    }
+    
+
+    if (result.length === 0) {
+      // Si no se encuentra la imagen en la base de datos, respondemos con un 404
+      res.status(404).json({ message: 'Imagen no encontrada' });
+    } else {
+      const rutaImagen = result[0].urlimg;
+
+      // Eliminamos la imagen de la base de datos
+      await pool.query('DELETE FROM imagen WHERE idimagen = ?', [id], async (err, _) => {
+        if (err) {
+          throw err;
+        }
+
+        try {
+          // Eliminamos el archivo de la carpeta media utilizando fs.unlink
+          await unlinkAsync(`./${rutaImagen}`);
+
+          // Si se elimina correctamente, respondemos con un mensaje de éxito
+          res.json({ message: 'Imagen eliminada' });
+        } catch (unlinkError) {
+          // Si ocurre un error al eliminar el archivo, respondemos con un 500
+          res.status(500).json({ message: 'Error al eliminar el archivo de la carpeta media' });
+        }
+      });
+    }
+  });
+}
+
+    
+
+
+
 
 
     //getid
@@ -122,7 +184,13 @@ class ProductoController {
         for (const i of result1[0]) {
           const result2 = await p.query('SELECT * FROM imagen WHERE idimagen = ?', [i.idimagen]);
           const result3: any = result2;
-          img.push(result3[0][0]);
+          img.push(
+            {
+              idimagen: result3[0][0].idimagen,
+              urlimg: `http://localhost:3000${result3[0][0].urlimg}`
+              //urlimg: `https://www.appopular.me${result3[0][0].urlimg}`
+            }
+          );
         }
         res.json({
             idProductos: rows1[0].idProductos,
@@ -183,10 +251,6 @@ class ProductoController {
       res.json({ message: 'Producto eliminado'});
     });
   }
-
-
-
-
 
 
 

@@ -10,16 +10,17 @@ class ProductosRouter {
         this.config();
     }
     config() {
-        this.router.get('/productoslist/:id', Productos_Controller_1.productoController.getProducto);
-        this.router.get('/productos/:id', Productos_Controller_1.productoController.getidProducto);
-        this.router.get('/productoscateg/:id', Productos_Controller_1.productoController.getProductoCateg);
+        this.router.get('/productoslist/:id', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], Productos_Controller_1.productoController.getProducto);
+        this.router.get('/productos/:id', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], Productos_Controller_1.productoController.getidProducto);
+        this.router.get('/productoscateg/:id', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], Productos_Controller_1.productoController.getProductoCateg);
         this.router.post('/productos', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], Productos_Controller_1.productoController.createProducto);
         this.router.put('/productos/:id', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], Productos_Controller_1.productoController.updateProducto);
         this.router.delete('/productos/:id', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], Productos_Controller_1.productoController.deleteProducto);
-        this.router.get('/imagencat/:id', Productos_Controller_1.productoController.getidimagen);
-        this.router.post('/imagen', Productos_Controller_1.productoController.createimagen);
+        this.router.get('/imagencat/:id', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], Productos_Controller_1.productoController.getidimagen);
+        this.router.post('/imagen', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], Productos_Controller_1.productoController.createimagen);
         this.router.put('/imagen/:id', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], Productos_Controller_1.productoController.updateimagen);
         this.router.delete('/imagen/:id', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], Productos_Controller_1.productoController.deleteimagen);
+        this.router.delete('/deletecomplete/:id', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], Productos_Controller_1.productoController.deleteimagentotAL);
         this.router.get('/categoriaslist/:id', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], Productos_Controller_1.productoController.getCategoria);
         this.router.get('/categorias/:id', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], Productos_Controller_1.productoController.getidCategoria);
         this.router.post('/categorias', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], Productos_Controller_1.productoController.createCategoria);

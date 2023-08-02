@@ -15,6 +15,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.productoController = void 0;
 const database_1 = __importDefault(require("../database"));
 const database1_1 = __importDefault(require("../database1"));
+const fs = require('fs');
+const { promisify } = require('util');
+const unlinkAsync = promisify(fs.unlink);
 class ProductoController {
     //Producto
     //get
@@ -31,7 +34,14 @@ class ProductoController {
                     const result1 = result;
                     const img = [];
                     for (const i of result1[0]) {
-                        img.push(i.idimagen);
+                        console.log(i);
+                        const result2 = yield p.query('SELECT * FROM imagen WHERE idimagen = ?', [i.idimagen]);
+                        const r = result2[0];
+                        img.push({
+                            idimagen: result1[0].idimagen,
+                            //urlimg: `http://localhost:3000${r[0].urlimg}`
+                            urlimg: `https://www.appopular.me${r[0].urlimg}`
+                        });
                     }
                     res1.push({
                         idProductos: item.idProductos,
@@ -124,6 +134,44 @@ class ProductoController {
             });
         });
     }
+    deleteimagentotAL(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            if (!id) {
+                res.status(404).json({ message: 'Campos Requeridos' });
+                return;
+            }
+            // Primero, obtenemos la información de la imagen para obtener su ruta en el sistema de archivos
+            yield database_1.default.query('SELECT urlimg FROM imagen WHERE idimagen = ?', [id], (err, result) => __awaiter(this, void 0, void 0, function* () {
+                if (err) {
+                    throw err;
+                }
+                if (result.length === 0) {
+                    // Si no se encuentra la imagen en la base de datos, respondemos con un 404
+                    res.status(404).json({ message: 'Imagen no encontrada' });
+                }
+                else {
+                    const rutaImagen = result[0].urlimg;
+                    // Eliminamos la imagen de la base de datos
+                    yield database_1.default.query('DELETE FROM imagen WHERE idimagen = ?', [id], (err, _) => __awaiter(this, void 0, void 0, function* () {
+                        if (err) {
+                            throw err;
+                        }
+                        try {
+                            // Eliminamos el archivo de la carpeta media utilizando fs.unlink
+                            yield unlinkAsync(`./${rutaImagen}`);
+                            // Si se elimina correctamente, respondemos con un mensaje de éxito
+                            res.json({ message: 'Imagen eliminada' });
+                        }
+                        catch (unlinkError) {
+                            // Si ocurre un error al eliminar el archivo, respondemos con un 500
+                            res.status(500).json({ message: 'Error al eliminar el archivo de la carpeta media' });
+                        }
+                    }));
+                }
+            }));
+        });
+    }
     //getid
     getidProducto(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -138,7 +186,11 @@ class ProductoController {
                 for (const i of result1[0]) {
                     const result2 = yield p.query('SELECT * FROM imagen WHERE idimagen = ?', [i.idimagen]);
                     const result3 = result2;
-                    img.push(result3[0][0]);
+                    img.push({
+                        idimagen: result3[0][0].idimagen,
+                        urlimg: `http://localhost:3000${result3[0][0].urlimg}`
+                        //urlimg: `https://www.appopular.me${result3[0][0].urlimg}`
+                    });
                 }
                 res.json({
                     idProductos: rows1[0].idProductos,

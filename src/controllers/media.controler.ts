@@ -10,17 +10,29 @@ class MediaController {
 
     public async Upload(req: Request, res: Response): Promise<void>{
         if (!req.files || Object.keys(req.files).length === 0) {
-            res.status(400).json({ message:'No se ha encontrado ningún archivo.'});
+            res.status(404).json({ message:'No se ha encontrado ningún archivo.'});
         }
         const img = req.files!.img as UploadedFile;
-       
-        img.mv('./media/' + img.name, (err) => {
-            if (err) {
-                console.log(err);
-                return res.status(400).json({message: 'Error al subir el archivo.'});
-            }
-            res.json({ status: 'ok', url: `/media/${img.name}` });
-        });
+        const p = pool1.promise();
+        const rows = await p.query('SELECT * FROM imagen WHERE urlimg LIKE ?',[`/media/${img.name}`]);
+        if(rows.length) {
+            const a = Math.random();
+            img.mv('./media/' +a+img.name, (err) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(404).json({message: 'Error al subir el archivo.'});
+                }
+                res.json({ status: 'ok', url: `/media/${a+img.name}` });
+            });
+        }else{
+            img.mv('./media/' + img.name, (err) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(404).json({message: 'Error al subir el archivo.'});
+                }
+                res.json({ status: 'ok', url: `/media/${img.name}` });
+            });
+        }
     }
 
     public async ImageBase64(req: Request, res: Response): Promise<void>{

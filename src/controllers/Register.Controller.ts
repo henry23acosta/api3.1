@@ -17,14 +17,15 @@ class RegisterController {
 
   public async createUser(req: Request, res: Response):Promise<void> {
     const { nombre,user,password,telefono,correo,Estado } = req.body;
-    let pass = md5(password);
     if (!(nombre && user && password && telefono && correo && Estado )){
       res.status(404).json({message: 'Campos Requeridos'});
+      return;
     }
 
+    let pass = md5(password);
+
     await pool.query('call crearusuarionuevo(?,?,?,?,?,?)', [ nombre,user,pass,telefono,correo,Estado ], (err, result) => {
-      if(err) throw err;
-      res.json({message: 'Usuario Creado', result: result[0]});
+      res.json({message: 'Usuario Creado', result: result[0][0]});
     });
   }
 

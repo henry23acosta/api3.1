@@ -30,14 +30,13 @@ class RegisterController {
     createUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { nombre, user, password, telefono, correo, Estado } = req.body;
-            let pass = (0, md5_1.default)(password);
             if (!(nombre && user && password && telefono && correo && Estado)) {
                 res.status(404).json({ message: 'Campos Requeridos' });
+                return;
             }
+            let pass = (0, md5_1.default)(password);
             yield database_1.default.query('call crearusuarionuevo(?,?,?,?,?,?)', [nombre, user, pass, telefono, correo, Estado], (err, result) => {
-                if (err)
-                    throw err;
-                res.json({ message: 'Usuario Creado', result: result[0] });
+                res.json({ message: 'Usuario Creado', result: result[0][0] });
             });
         });
     }

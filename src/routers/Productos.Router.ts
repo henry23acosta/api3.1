@@ -9,17 +9,18 @@ class ProductosRouter {
         this.config();
     }
     config(): void {
-        this.router.get('/productoslist/:id',productoController.getProducto);
-        this.router.get('/productos/:id',productoController.getidProducto);
-        this.router.get('/productoscateg/:id',productoController.getProductoCateg);
+        this.router.get('/productoslist/:id',[chekjwt, checkrole([2,3])],productoController.getProducto);
+        this.router.get('/productos/:id',[chekjwt, checkrole([2,3])],productoController.getidProducto);
+        this.router.get('/productoscateg/:id',[chekjwt, checkrole([2,3])],productoController.getProductoCateg);
         this.router.post('/productos',[chekjwt, checkrole([2,3])], productoController.createProducto);
         this.router.put('/productos/:id',[chekjwt, checkrole([2,3])], productoController.updateProducto);
         this.router.delete('/productos/:id',[chekjwt, checkrole([2,3])], productoController.deleteProducto);
 
-        this.router.get('/imagencat/:id',productoController.getidimagen);
-        this.router.post('/imagen', productoController.createimagen);
+        this.router.get('/imagencat/:id',[chekjwt, checkrole([2,3])],productoController.getidimagen);
+        this.router.post('/imagen', [chekjwt, checkrole([2,3])],productoController.createimagen);
         this.router.put('/imagen/:id',[chekjwt, checkrole([2,3])], productoController.updateimagen);
         this.router.delete('/imagen/:id',[chekjwt, checkrole([2,3])], productoController.deleteimagen);
+        this.router.delete('/deletecomplete/:id',[chekjwt, checkrole([2,3])], productoController.deleteimagentotAL);
 
         this.router.get('/categoriaslist/:id',[chekjwt, checkrole([2,3])], productoController.getCategoria);
         this.router.get('/categorias/:id',[chekjwt, checkrole([2,3])],productoController.getidCategoria);
