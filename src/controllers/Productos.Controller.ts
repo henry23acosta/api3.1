@@ -187,8 +187,8 @@ class ProductoController {
           img.push(
             {
               idimagen: result3[0][0].idimagen,
-              urlimg: `http://localhost:3000${result3[0][0].urlimg}`
-              //urlimg: `https://www.appopular.me${result3[0][0].urlimg}`
+              //urlimg: `http://localhost:3000${result3[0][0].urlimg}`
+              urlimg: `https://www.appopular.me${result3[0][0].urlimg}`
             }
           );
         }
