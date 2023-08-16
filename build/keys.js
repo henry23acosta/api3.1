@@ -9,3 +9,11 @@ exports.default = {
         database: process.env.DB_DATABASE
     }
 };
+//Conexion local evn 
+//PORT = 3000
+//DB_HOST = 'localhost'
+//DB_USER =  'node'
+//DB_PASSWORD = 'root'
+//DB_DATABASE = 'appopu2023'
+//GMAIL_USER = 'popularcentrocomercial@gmail.com'
+//GMAIL_PASSWORD = 'zzqdddrcatnaabhh' 

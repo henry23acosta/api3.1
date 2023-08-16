@@ -39,8 +39,8 @@ class ProductoController {
                         const r = result2[0];
                         img.push({
                             idimagen: result1[0].idimagen,
-                            urlimg: `http://localhost:3000${r[0].urlimg}`
-                            //urlimg: `https://www.appopular.me${r[0].urlimg}`
+                            //urlimg: `http://localhost:3000${r[0].urlimg}`
+                            urlimg: `https://www.appopular.me${r[0].urlimg}`
                         });
                     }
                     res1.push({
@@ -188,8 +188,8 @@ class ProductoController {
                     const result3 = result2;
                     img.push({
                         idimagen: result3[0][0].idimagen,
-                        urlimg: `http://localhost:3000${result3[0][0].urlimg}`
-                        //urlimg: `https://www.appopular.me${result3[0][0].urlimg}`
+                        //urlimg: `http://localhost:3000${result3[0][0].urlimg}`
+                        urlimg: `https://www.appopular.me${result3[0][0].urlimg}`
                     });
                 }
                 res.json({
