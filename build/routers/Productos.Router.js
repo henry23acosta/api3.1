@@ -34,6 +34,7 @@ class ProductosRouter {
         this.router.get('/compratemp/:id', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], Productos_Controller_1.productoController.ListCompra);
         this.router.delete('/compratmp/:id', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], Productos_Controller_1.productoController.deletecompratmp);
         this.router.delete('/compratmpid/:id', [jwt_1.chekjwt, (0, roles_1.checkrole)([2, 3])], Productos_Controller_1.productoController.deleteidcompratmp);
+        this.router.get('/utilidadid/:id', Productos_Controller_1.productoController.getidUtilidad);
     }
 }
 const productosRouter = new ProductosRouter();

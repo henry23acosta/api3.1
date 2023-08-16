@@ -30,8 +30,8 @@ class ProductoController {
             img.push(
               {
                 idimagen: result1[0].idimagen,
-                //urlimg: `http://localhost:3000${r[0].urlimg}`
-                urlimg: `https://www.appopular.me${r[0].urlimg}`
+                urlimg: `http://localhost:3000${r[0].urlimg}`
+                //urlimg: `https://www.appopular.me${r[0].urlimg}`
               }
             );
           }
@@ -62,7 +62,7 @@ class ProductoController {
       try{
         const { id } = req.params;
         const p = pool1.promise();
-        const [rows,fields] = await p.query('SELECT * FROM productos WHERE idCategoria = ?',[ id ]);
+        const [rows,fields] = await p.query('SELECT * FROM productos WHERE idCategoria = ? AND estado = 1',[ id ]);
         res.json(rows);
       }
       catch(e:any){
@@ -164,11 +164,7 @@ class ProductoController {
     }
   });
 }
-
-    
-
-
-
+   
 
 
     //getid
@@ -187,8 +183,8 @@ class ProductoController {
           img.push(
             {
               idimagen: result3[0][0].idimagen,
-              //urlimg: `http://localhost:3000${result3[0][0].urlimg}`
-              urlimg: `https://www.appopular.me${result3[0][0].urlimg}`
+              urlimg: `http://localhost:3000${result3[0][0].urlimg}`
+              //urlimg: `https://www.appopular.me${result3[0][0].urlimg}`
             }
           );
         }
@@ -220,7 +216,7 @@ class ProductoController {
 
       await pool.query('call generainventarioinicial(?,?,?,?,?,?,?);',[nombre, costo, talla, imagen, stock, idCategoria, id_negocio],(err, result) =>{
         if(err) throw err;
-        res.json({text: 'Categoria Creada'});
+        res.json({text: 'Producto Creado Exitosamente'});
       });
      
   }
@@ -334,6 +330,7 @@ class ProductoController {
 
 //GENERAR COMPRA FINAL
   public async generarcompra( req: Request, res: Response ): Promise<void>{
+    console.log
     const { idusuario, idProveedores, num_fac, idnegocio } = req.body;
     console.log(req.body);
     if (!( idusuario && idProveedores && num_fac && idnegocio )){
@@ -346,6 +343,7 @@ class ProductoController {
     });
   }
   
+
   //vistas compra 
   //FACTURA
   public async getcompra(req: Request, res: Response):Promise<void>{
@@ -414,6 +412,23 @@ public async getIddetallecompra(req: Request, res: Response):Promise<void>{
       res.json({message: 'detalle elimnado'});
     });
   }
+
+   //Utilidades
+    //getid
+    public async getidUtilidad(req: Request, res: Response):Promise<void> {
+      const { id } = req.params;
+      const query = `SELECT u.*, p.nombre AS nombre_producto FROM utilidad u `+
+      `JOIN productos p ON u.idProductos = p.idProductos `+`WHERE u.idProductos` 
+        await pool.query(query+' = ?', [ id ], (err, result) => {
+            if(err) throw err;
+            if(result.length){
+                return res.json(result)
+            }
+        res.status(404).json({text: 'Utilidad no existe'});
+      });
+    }
+
+
 
  }
 

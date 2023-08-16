@@ -39,8 +39,8 @@ class ProductoController {
                         const r = result2[0];
                         img.push({
                             idimagen: result1[0].idimagen,
-                            //urlimg: `http://localhost:3000${r[0].urlimg}`
-                            urlimg: `https://www.appopular.me${r[0].urlimg}`
+                            urlimg: `http://localhost:3000${r[0].urlimg}`
+                            //urlimg: `https://www.appopular.me${r[0].urlimg}`
                         });
                     }
                     res1.push({
@@ -67,7 +67,7 @@ class ProductoController {
             try {
                 const { id } = req.params;
                 const p = database1_1.default.promise();
-                const [rows, fields] = yield p.query('SELECT * FROM productos WHERE idCategoria = ?', [id]);
+                const [rows, fields] = yield p.query('SELECT * FROM productos WHERE idCategoria = ? AND estado = 1', [id]);
                 res.json(rows);
             }
             catch (e) {
@@ -221,7 +221,7 @@ class ProductoController {
             yield database_1.default.query('call generainventarioinicial(?,?,?,?,?,?,?);', [nombre, costo, talla, imagen, stock, idCategoria, id_negocio], (err, result) => {
                 if (err)
                     throw err;
-                res.json({ text: 'Categoria Creada' });
+                res.json({ text: 'Producto Creado Exitosamente' });
             });
         });
     }
@@ -348,6 +348,7 @@ class ProductoController {
     //GENERAR COMPRA FINAL
     generarcompra(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log;
             const { idusuario, idProveedores, num_fac, idnegocio } = req.body;
             console.log(req.body);
             if (!(idusuario && idProveedores && num_fac && idnegocio)) {
@@ -438,6 +439,23 @@ class ProductoController {
                 if (err)
                     throw err;
                 res.json({ message: 'detalle elimnado' });
+            });
+        });
+    }
+    //Utilidades
+    //getid
+    getidUtilidad(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            const query = `SELECT u.*, p.nombre AS nombre_producto FROM utilidad u ` +
+                `JOIN productos p ON u.idProductos = p.idProductos ` + `WHERE u.idProductos`;
+            yield database_1.default.query(query + ' = ?', [id], (err, result) => {
+                if (err)
+                    throw err;
+                if (result.length) {
+                    return res.json(result);
+                }
+                res.status(404).json({ text: 'Utilidad no existe' });
             });
         });
     }
