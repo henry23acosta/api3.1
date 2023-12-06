@@ -44,9 +44,10 @@ class ProveedoresController {
 
     public async updateProveedores(req: Request, res: Response): Promise<void> {
         const { identificacion,nombre,direccion,telefono,email,bancos,estado,Cuenta_bancaria } = req.body;
+        const fecha_update = new Date();
         const { id } = req.params;
-        await pool.query('UPDATE proveedores SET identificacion = ?, nombre = ?, direccion = ?, telefono = ?, email = ?, estado = ?,bancos=?, Cuenta_bancaria = ? WHERE idProveedores = ?',
-        [identificacion,nombre,direccion,telefono,email,estado,bancos,Cuenta_bancaria,id],(err, result) => {
+        await pool.query('UPDATE proveedores SET identificacion = ?, nombre = ?, direccion = ?, telefono = ?, email = ?, estado = ?,bancos=?, Cuenta_bancaria = ?, fecha_update=? WHERE idProveedores = ?',
+        [identificacion,nombre,direccion,telefono,email,estado,bancos,Cuenta_bancaria, fecha_update,id],(err, result) => {
           if(err) throw err;
           res.json({text: 'Proveedor Actualizado'});
         });

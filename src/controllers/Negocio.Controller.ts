@@ -41,9 +41,10 @@ class NegocioController {
 
     public async updateNegocio(req: Request, res: Response): Promise<void> {
         const { nombre, ruc, direccion, telefono, correo } = req.body;
+        const fecha_update = new Date();
         const { id } = req.params;
-        await pool.query('UPDATE negocio SET nombre = ?, ruc = ?, direccion = ?, telefono = ?, correo = ? WHERE id_negocio = ?',
-        [nombre,ruc,direccion,telefono,correo,id],(err, result) => {
+        await pool.query('UPDATE negocio SET nombre = ?, ruc = ?, direccion = ?, telefono = ?, correo = ?, fecha_update =? WHERE id_negocio = ?',
+        [nombre,ruc,direccion,telefono,correo,fecha_update,id],(err, result) => {
           if(err) throw err;
           res.json({text: 'Negocio Actualizado'});
         });

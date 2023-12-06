@@ -62,9 +62,10 @@ class ClienteController {
 
     public async updateCliente(req: Request, res: Response): Promise<void> {
         const { nombre,identificacion,direccion,telefono,correo} = req.body;
+        const fecha_update = new Date();
         const { id } = req.params;
-        await pool.query('UPDATE cliente SET nombre = ?, identificacion = ?, direccion = ?, telefono = ?, correo = ? WHERE idCliente = ?',
-        [nombre,identificacion,direccion,telefono,correo,id],(err, result) => {
+        await pool.query('UPDATE cliente SET nombre = ?, identificacion = ?, direccion = ?, telefono = ?, correo = ?,fecha_update = ? WHERE idCliente = ?',
+        [nombre,identificacion,direccion,telefono,correo,fecha_update,id],(err, result) => {
           if(err) throw err;
           res.json({text: 'Cliente Actualizado'});
         });

@@ -62,8 +62,9 @@ class ProveedoresController {
     updateProveedores(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { identificacion, nombre, direccion, telefono, email, bancos, estado, Cuenta_bancaria } = req.body;
+            const fecha_update = new Date();
             const { id } = req.params;
-            yield database_1.default.query('UPDATE proveedores SET identificacion = ?, nombre = ?, direccion = ?, telefono = ?, email = ?, estado = ?,bancos=?, Cuenta_bancaria = ? WHERE idProveedores = ?', [identificacion, nombre, direccion, telefono, email, estado, bancos, Cuenta_bancaria, id], (err, result) => {
+            yield database_1.default.query('UPDATE proveedores SET identificacion = ?, nombre = ?, direccion = ?, telefono = ?, email = ?, estado = ?,bancos=?, Cuenta_bancaria = ?, fecha_update=? WHERE idProveedores = ?', [identificacion, nombre, direccion, telefono, email, estado, bancos, Cuenta_bancaria, fecha_update, id], (err, result) => {
                 if (err)
                     throw err;
                 res.json({ text: 'Proveedor Actualizado' });

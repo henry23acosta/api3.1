@@ -290,12 +290,13 @@ class ProductoController {
     
     public async updateCategoria(req: Request, res: Response):Promise<void> {
       const { Nombre,Descripcion } = req.body;
+      const fecha_update = new Date();
       const { id } = req.params;
       if (!(Nombre && Descripcion && id)){
         res.status(404).json({message: 'Campos Requeridos'});
       }
-      await pool.query('UPDATE categoria SET Nombre = ?, Descripcion = ? WHERE idCategoria = ?;',
-       [ Nombre,Descripcion, id ], (err, result) => {
+      await pool.query('UPDATE categoria SET Nombre = ?, Descripcion = ?, fecha_update=? WHERE idCategoria = ?;',
+       [ Nombre,Descripcion,fecha_update, id ], (err, result) => {
         if(err) throw err;
         res.json({text: 'Categoria editada'});
       });

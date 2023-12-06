@@ -17,3 +17,11 @@ exports.default = {
 //DB_DATABASE = 'appopu2023'
 //GMAIL_USER = 'popularcentrocomercial@gmail.com'
 //GMAIL_PASSWORD = 'zzqdddrcatnaabhh' 
+//Conexion externa
+//PORT = 3000
+//DB_HOST = 'localhost'
+//DB_USER =  'node'
+//DB_PASSWORD = 'Node_2023'
+//DB_DATABASE = 'appopular'
+//GMAIL_USER = 'popularcentrocomercial@gmail.com'
+//GMAIL_PASSWORD = 'zzqdddrcatnaabhh'

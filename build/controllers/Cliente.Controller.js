@@ -84,8 +84,9 @@ class ClienteController {
     updateCliente(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { nombre, identificacion, direccion, telefono, correo } = req.body;
+            const fecha_update = new Date();
             const { id } = req.params;
-            yield database_1.default.query('UPDATE cliente SET nombre = ?, identificacion = ?, direccion = ?, telefono = ?, correo = ? WHERE idCliente = ?', [nombre, identificacion, direccion, telefono, correo, id], (err, result) => {
+            yield database_1.default.query('UPDATE cliente SET nombre = ?, identificacion = ?, direccion = ?, telefono = ?, correo = ?,fecha_update = ? WHERE idCliente = ?', [nombre, identificacion, direccion, telefono, correo, fecha_update, id], (err, result) => {
                 if (err)
                     throw err;
                 res.json({ text: 'Cliente Actualizado' });

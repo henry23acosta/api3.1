@@ -305,11 +305,12 @@ class ProductoController {
     updateCategoria(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { Nombre, Descripcion } = req.body;
+            const fecha_update = new Date();
             const { id } = req.params;
             if (!(Nombre && Descripcion && id)) {
                 res.status(404).json({ message: 'Campos Requeridos' });
             }
-            yield database_1.default.query('UPDATE categoria SET Nombre = ?, Descripcion = ? WHERE idCategoria = ?;', [Nombre, Descripcion, id], (err, result) => {
+            yield database_1.default.query('UPDATE categoria SET Nombre = ?, Descripcion = ?, fecha_update=? WHERE idCategoria = ?;', [Nombre, Descripcion, fecha_update, id], (err, result) => {
                 if (err)
                     throw err;
                 res.json({ text: 'Categoria editada' });
